@@ -47,7 +47,6 @@ void Snek::tick(){
       break;
   }
   // check if next direction is the previous position (if so, go forward)
-    // TODO verify that this catches wrap-arounds
   if(joystickDirection == NO_DIRECTION || 
     (nextX == headNode->previousNode->x && nextY == headNode->previousNode->y)){
       nextX = (2 * headNode->x) - headNode->previousNode->x;
@@ -58,6 +57,18 @@ void Snek::tick(){
   if(nextX < 0) nextX = 7;
   if(nextY > 7) nextY = 0;
   if(nextY < 0) nextY = 7;
+  // check if there was a wrap-around to the previous node (if so, go other way)
+  if(nextX == headNode->previousNode->x && nextY == headNode->previousNode->y){
+    if(nextY == headNode->y){
+      if(nextX == 7) nextX = 1;
+      else if(nextX == 0) nextX = 6;
+    }else if(nextX == headNode->x){
+      if(nextY == 7) nextY = 1;
+      else if(nextY == 0) nextY = 6;
+    }else{
+      //throw "this should never occur";
+    }
+  }
   // check if next position is a Snek node (die if so)
   bool collision = false;
   SnekNode *previous = headNode->previousNode;
