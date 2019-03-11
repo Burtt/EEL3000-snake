@@ -17,7 +17,7 @@ void Driver::init(){
   }
 }
 
-void Driver::clockPin(byte pinNum){
+void Driver::clockPin(int8_t pinNum){
   digitalWrite(pinNum, HIGH);
   digitalWrite(pinNum, LOW);
 }
@@ -34,7 +34,7 @@ void Driver::clock(bool serHigh){
 }
 
 void Driver::draw(bool sprite[8][8]){
-  for(byte i = 0; i < 8; i++){
+  for(int8_t i = 0; i < 8; i++){
     digitalWrite(OE, HIGH);
     for(int j = 0; j < 8; j++){
       digitalWrite(ROW_PINS[j], sprite[i][j] ? LOW : HIGH);

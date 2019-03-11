@@ -1,10 +1,17 @@
 #include "snek.h"
+#include "direction.h"
 
-Snek::Snek(byte x, byte y){
+bool SnekNode::collidesWith(int8_t testX, int8_t testY){
+  if(testX == x && testY == y) return true;
+  if(previousNode != NULL) return previousNode->collidesWith(testX, testY);
+  return false;
+}
+
+Snek::Snek(int8_t x, int8_t y){
   //if(x >=5) throw "snek starting too far right!";
   tailNode = new SnekNode(x,y);
   headNode = tailNode;
-  for(int i = 1; i < 4; i++){
+  for(int i = 1; i < 3; i++){
     headNode = new SnekNode(x+i,y, headNode);
   }
 }
@@ -24,10 +31,16 @@ void Snek::snipTail(){
   tailNode = nextTail;
 }
 
-void Snek::tick(){
+void Snek::generateNewNode(){
+  do{
+    newNodeX = random(0,7);
+    newNodeY = random(0,7);
+  }while(headNode->collidesWith(newNodeX, newNodeY));
+}
+
+void Snek::tick(int8_t joystickDirection){
   // calculate next position based on joystick direction (wrap around if necessary)
-  byte nextX, nextY;
-  byte joystickDirection = getJoystickDirection();
+  int8_t nextX, nextY;
   switch(joystickDirection){
     case RIGHT:
       nextX = headNode->x + 1;
@@ -70,23 +83,16 @@ void Snek::tick(){
     }
   }
   // check if next position is a Snek node (die if so)
-  bool collision = false;
-  SnekNode *previous = headNode->previousNode;
-  while(previous != NULL){
-    if(nextX == previous->x && nextY == previous->y){
-      collision = true;
-      break;
-    }
-    previous = previous->previousNode;
-  }
-  if(collision){
+  if(headNode->collidesWith(nextX, nextY)){
     // TODO die
   }
-  // check if next position is a new node (new head without snipping tail if so)
-    // TODO add this once new nodes exist
-  // otherwise, add new head and snip tail
   headNode = new SnekNode(nextX,nextY,headNode);
-  snipTail();
+  // check if next position is a new node (snip tail otherwise)
+  if(newNodeX == nextX && newNodeY == nextY){
+    generateNewNode();
+  }else{
+    snipTail();
+  }
 }
 
 void Snek::render(bool leds[8][8]){
@@ -95,6 +101,6 @@ void Snek::render(bool leds[8][8]){
     leds[node->x][node->y] = true;
     node = node->previousNode;
   }
-  // TODO render newNode here
+  leds[newNodeX][newNodeY] = true;
 }
 

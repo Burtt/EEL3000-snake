@@ -4,13 +4,13 @@
 
 class Driver{
   private:
-    const byte SER = 2;
-    const byte SRCLK = 3;
-    const byte RCLK = 4; 
-    const byte OE = 5; 
-    const byte ROW_PINS[8] = {13,6,7,12,8,9,10,11};
+    const int8_t SER = 2;
+    const int8_t SRCLK = 3;
+    const int8_t RCLK = 4;
+    const int8_t OE = 5;
+    const int8_t ROW_PINS[8] = {1,6,11,12,7,10,8,9}; 
     
-    void clockPin(byte);
+    void clockPin(int8_t);
     void clock(bool);
   public:
     Driver() {}
